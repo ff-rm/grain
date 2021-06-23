@@ -51,12 +51,10 @@ var position = new Nexus.Position('#position',{
   'stepY': 1
 })
 
-const channel = new Tone.Channel({
-  volume: -100,
-}).toDestination();
+const channel = new Tone.Channel({ volume: -100});
 
 const lfo = new Tone.LFO(lfofreq, -1,1).connect(channel.pan).start();
-const feedbackDelay = new Tone.FeedbackDelay("8n", 0.5).connect(channel);
+const feedbackDelay = new Tone.FeedbackDelay("8n", 0.5);
 
 const synth = new Tone.MetalSynth({
   resonance : 1000,
@@ -65,8 +63,10 @@ const synth = new Tone.MetalSynth({
   modulationIndex : modIndex,
   octaves : 1,
   volume : -1
-}).connect(feedbackDelay);
+});
 
+
+synth.chain(feedbackDelay, channel, Tone.Destination);
 
 //funciones
 //On/Off
@@ -99,7 +99,7 @@ const loop = new Tone.Loop((time) => {
 	// console.log(vel);
 	synth.triggerAttackRelease(freq);
 }, "4n").start(0);
-Tone.Transport.start();
+
 
 
 //Analisis y Visualización
@@ -120,14 +120,16 @@ osci.connect(channel);
   //   	mod_rel = v[3];
   //   console.log(v);
   // })
+var onoff = new Nexus.Button('#onoff',{
+  'size': [50,50],
+})
 
-// onoff.on('change',function(v) {
-  //   if(v){
-    //     synth.triggerAttack(90)}
-    //   else{
-      //     synth.volume.rampTo(-Infinity, 1);
-      //     };
-      // })
+
+onoff.on('change',function(v) {
+    Tone.start();
+    console.log("botton");
+    Tone.Transport.start();
+});
 
 // rand.on('change',function(v) {
   //   console.log(atk);
@@ -160,9 +162,3 @@ osci.connect(channel);
       // })
 
 
-      // var onoff = new Nexus.TextButton('#onoff',{
-        //   'size': [50,50],
-        //   'state': false,
-        //   'text': 'on',
-        //   'alternateText': 'off'
-        // })
